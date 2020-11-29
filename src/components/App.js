@@ -155,82 +155,66 @@ const states = [
 ];
 
 function App() {
-  console.log(states);
+  const [cities, setCities] = useState([]);
+  const [towns, setTowns] = useState([]);
+
+  const handleState = (indexReceived) => {
+    let citiesRetrieved = [];
+    states.forEach((state, index) => {
+      if (index === indexReceived) {
+        citiesRetrieved = state.cities;
+      }
+    });
+    if (cities.length !== 0 && cities[0].name === citiesRetrieved[0].name) {
+      setCities([]);
+      setTowns([]);
+      return;
+    }
+    setCities(citiesRetrieved);
+    setTowns([]);
+  };
+  const handleCity = (cityReceived) => {
+    let townsRetrieved = [];
+    cities.forEach((city) => {
+      if (city.name === cityReceived) {
+        townsRetrieved = city.towns;
+      }
+    });
+    if (towns.length !== 0 && towns[0].name === townsRetrieved[0].name) {
+      setTowns([]);
+      return;
+    }
+    setTowns(townsRetrieved);
+  };
   return (
     <div id="main">
-      <StateList states={states} />
-    </div>
-  );
-}
-
-function StateList(props) {
-  const { states } = props;
-  console.log(states);
-  const stateClickStatus = Array(states.length).fill(false);
-  // console.log(stateClickStatus);
-  const [clickedStates, setClickedStates] = useState(stateClickStatus);
-
-  return (
-    <>
+      <h1>States</h1>
       {states.map((state, index) => (
-        <ul key={index}>
-          <h3
-            id={`state${index + 1}`}
-            key={index}
-            onClick={(event) => {
-              event.preventDefault();
-              let copyClickedStates = [...clickedStates];
-              copyClickedStates[index] = !copyClickedStates[index];
-              setClickedStates(copyClickedStates);
-            }}
-          >
-            {state.name}
-            <br />
-          </h3>
-          <CitiyList cities={state.cities} isVisible={clickedStates[index]} />
-        </ul>
+        <button
+          key={state.name}
+          id={`state${index + 1}`}
+          onClick={() => handleState(index)}
+        >
+          {state.name}
+        </button>
       ))}
-    </>
-  );
-}
-
-function CitiyList(props) {
-  const { cities, isVisible } = props;
-  const cityClickStatus = Array(states.length).fill(false);
-  const [cityClick, setCityClick] = useState(cityClickStatus);
-  //console.log(cityClick);
-
-  return (
-    <>
-      {" "}
-      {isVisible
-        ? cities.map((city, index) => (
-          <ul key={`${index}${city.name}`}>
-            <li
-              key={index}
-              id={`city${index + 1}`}
-              onClick={(event) => {
-                event.preventDefault();
-                const copyOfClicked = [...cityClick];
-                copyOfClicked[index] = !copyOfClicked[index];
-                setCityClick(copyOfClicked);
-              }}
-            >
-              {" "}
-              <h4>{city.name}</h4>
-              <ul>
-              {cityClick[index]
-                ? city.towns.map((town, index) => (
-                    <li key={`${town.name}`} id={`twon${index + 1}`}>
-                      <h5>{town.name}</h5>
-                    </li>
-                  ))
-                : null}</ul>
-            </li>
-            </ul>
-          ))
-        : null}
-    </>
+      <h1>Cities</h1>
+      {cities.map((city, index) => (
+        <button
+          key={city.name}
+          id={`city${index + 1}`}
+          onClick={() => handleCity(city.name)}
+        >
+          {city.name}
+        </button>
+      ))}
+      <h1>Towns</h1>
+      {towns.map((town, index) => (
+        <div key={town.name} id={`town${index + 1}`}>
+          {town.name}
+        </div>
+      ))}
+    </div>
   );
 }
 
